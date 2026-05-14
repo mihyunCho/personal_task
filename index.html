@@ -103,7 +103,18 @@ body{font-family:'Pretendard',-apple-system,'Apple SD Gothic Neo','Malgun Gothic
 .lnk{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:4px 9px;border-radius:12px;text-decoration:none;font-weight:500;transition:.12s;border:1px solid;}
 .lnk-map{color:#1a6fc4;background:#e8f2fb;border-color:#b8d4f0;}
 .lnk-ref{color:var(--accent);background:var(--accent-bg);border-color:#d4b896;}
-.lnk:hover{opacity:.8;}
+.lnk-official{color:#1e5560;background:#e6f2f4;border-color:#a8d4d8;}
+/* ── 우선순위 ── */
+.pb{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--border2);background:var(--surface2);font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;transition:all .15s;color:var(--text3);-webkit-tap-highlight-color:transparent;}
+.pb:hover{border-color:var(--accent);color:var(--accent);}
+.pb.p1{background:#b8895a;border-color:#b8895a;color:#fff;}
+.pb.p2{background:#1a3d6e;border-color:#1a3d6e;color:#fff;}
+.pb.p3{background:#5a5a6a;border-color:#5a5a6a;color:#fff;}
+/* ── 공유 버튼 ── */
+.share-btn{margin-left:auto;display:flex;align-items:center;gap:5px;padding:5px 11px;border-radius:16px;border:1.5px solid var(--accent);background:var(--accent-bg);color:var(--accent);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0;-webkit-tap-highlight-color:transparent;transition:all .13s;}
+.share-btn:active{opacity:.7;}
+.share-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#18181f;color:#fff;font-size:13px;font-weight:500;padding:10px 20px;border-radius:20px;z-index:999;opacity:0;transition:opacity .2s;pointer-events:none;}
+.share-toast.show{opacity:1;}
 </style>
 </head>
 <body>
@@ -188,7 +199,52 @@ const D=[
   {g:'추가',n:'웨스틴서울파르나스 하모니볼룸',cap:'ok',maxC:'최대 480명 (웨딩 기준)',food:'미확인 (직상담)',cost:'미확인',rental:'미확인',loc:'강남구 봉은사로 524 (코엑스 동쪽)',tr:'2호선 삼성역 / 9호선 봉은사역',park:'✅ 코엑스 연결 (대규모)',mood:'28m 버진로드, 4K LED 미디어월, 어반 클래식, 2025.09.15 신규 개관, 구 인터컨티넨탈 코엑스',maps:'https://maps.google.com/?q=웨스틴서울파르나스+하모니볼룸+삼성동',ref:'https://www.thewestinseoulparnas.com/kor/weddings/harmony-ballroom',tags:['동시예식','2025년 9월 신규 개관','구 인터컨티넨탈 코엑스 전면 리뉴얼','식대·비용 직상담 필수']},
 ];
 
-const BK={SSS:'bSSS',SS:'bSS',S:'bS','A+':'bAp',추가:'bAdd'};
+const OFFICIAL={
+  '반얀트리 오아시스 웨딩':'https://www.banyantreeclub.com/mobile/celebration/wedding.asp',
+  '신라호텔 영빈관':'https://www.shilla.net/seoul/meetingEvent/wdYeongBinGwan.do',
+  '워커힐 애스톤하우스':'https://www.walkerhill.com/grandwalkerhillseoul/room/Aston-House',
+  '신라호텔 다이너스티홀':'https://www.shilla.net/seoul',
+  '조선팰리스 더그레이트홀':'https://jpg.josunhotel.com/meeting/wedding.do',
+  '시그니엘 그랜드볼룸':'https://www.lottehotel.com/seoul-signiel/ko/wedding-conference.html',
+  '웨스틴조선서울 그랜드볼룸':'https://josunhotel.com/hotel/westinSeoul.do',
+  '파르나스 그랜드볼룸':'https://seoul.intercontinental.com/grandicparnas/wedding/GrandWedding',
+  '그랜드하얏트 그랜드볼룸':'https://www.hyatt.com/grand-hyatt/ko-KR/selrs-grand-hyatt-seoul/weddings',
+  '반얀트리 크리스탈볼룸':'https://www.banyantreeclub.com/mobile/celebration/wedding.asp',
+  '반포 JW메리어트 그랜드볼룸':'https://www.marriott.com/ko/hotels/seljw-jw-marriott-hotel-seoul/events/',
+  '그랜드워커힐 비스타홀':'https://www.walkerhill.com/convention/Wedding',
+  '웨스틴조선 라일락홀':'https://josunhotel.com/hotel/westinSeoul.do',
+  '포시즌스 그랜드볼룸':'https://www.fourseasons.com/seoul/weddings/',
+  '페어몬트앰배서더 그랜드볼룸':'https://fairmont-seoul.com/meeting-events/weddings/',
+  '소피텔앰배서더 그랜드볼룸':'https://www.sofitel-seoul.com/events/weddings/',
+  '동대문 JW메리어트 그랜드볼룸':'https://www.marriott.com/ko/hotels/seldp-jw-marriott-dongdaemun-square-seoul/overview/',
+  '그랜드워커힐 워커홀':'https://www.walkerhill.com/convention/Wedding',
+  '더플라자호텔 지스텀하우스':'https://www.hoteltheplaza.com/en/meeting_and_wedding/wedding.jsp',
+  '롯데호텔 소공동 크리스탈볼룸':'https://www.lottehotel.com/seoul-hotel/ko/wedding-conference/hotel-wedding.html',
+  '앰배서더서울 풀만 그랜드볼룸':'https://ambatel.com/theambassador/seoul/ko/weddingView.do',
+  '앰배서더서울 풀만 남산룸':'https://ambatel.com/theambassador/seoul/ko/weddingView.do',
+  '라움':'https://www.theraum.co.kr',
+  '콘래드 그랜드볼룸':'https://www.conradseoul.co.kr',
+  '포시즌스 누리볼룸':'https://www.fourseasons.com/seoul/weddings/',
+  '롯데호텔 소공동 사파이어볼룸':'https://www.lottehotel.com/seoul-hotel/ko/wedding-conference/hotel-wedding/sapphire-ballroom.html',
+  '롯데호텔월드 크리스탈볼룸':'https://www.lottehotel.com/world-hotel/ko/wedding-conference/hotel-wedding/crystal-ballroom.html',
+  '더플라자 그랜드볼룸':'https://www.hoteltheplaza.com/en/meeting_and_wedding/wedding.jsp',
+  '롯데호텔월드 사파이어볼룸':'https://www.lottehotel.com/world-hotel/ko/wedding-conference/hotel-wedding/sapphire-ballroom.html',
+  '빌라드지디 청담 앙피레홀':'https://www.villadegd.com',
+  '크레스트72 글라스홀':'https://crest72.co.kr',
+  '아모리스':'https://www.amoris.co.kr',
+  '엘리애나호텔 그랜드볼룸':'https://elienahotel.com/eliena/content.php?co_id=wedding_grand_kr',
+  '메이필드호텔 볼룸홀':'https://www.mayfield.co.kr/wedding/ballroom.html',
+  '메이필드호텔 벨타워가든':'https://www.mayfield.co.kr/wedding/belltower.html',
+  '메이필드호텔 아트리움':'https://www.mayfield.co.kr/wedding/atrium.html',
+  '메종디탈리':'https://www.maisondltalie.com',
+  '엘타워 그랜드홀':'https://eltower.com/wedding/grand/',
+  '엘타워 그레이스홀':'https://eltower.com/wedding/grace/',
+  '엘타워 오르체홀':'https://eltower.com/wedding/orche/',
+  '그랜드힐컨벤션 그랜드볼룸':'https://www.grandhill.co.kr',
+  '그랜드힐컨벤션 사브리나홀':'https://www.grandhill.co.kr',
+  '그랜드힐컨벤션 플로리아홀':'https://www.grandhill.co.kr',
+  '웨스틴서울파르나스 하모니볼룸':'https://www.thewestinseoulparnas.com/kor/weddings/harmony-ballroom',
+};
 const GL={SSS:'SSS',SS:'SS',S:'S','A+':'A+',추가:'추가'};
 let curF='ALL';
 const op=new Set();
@@ -220,7 +276,7 @@ function render(){
         <div class="dr"><span class="dl">교통</span><span class="dv2">${h.tr}</span></div>
         <div class="dr"><span class="dl">주차</span><span class="dv2">${h.park}</span></div>
         <div class="dr"><span class="dl">분위기</span><span class="dv2" style="color:var(--text3)">${h.mood}</span></div>
-        ${(h.maps||h.ref)?`<div class="dr"><span class="dl">링크</span><span class="dv2"><div class="lnks">${h.maps?`<a href="${h.maps}" target="_blank" class="lnk lnk-map">📍 지도</a>`:''}${h.ref?`<a href="${h.ref}" target="_blank" class="lnk lnk-ref">🔗 홀 정보</a>`:''}</div></span></div>`:''}
+        ${(h.maps||h.ref||OFFICIAL[h.n])?`<div class="dr"><span class="dl">링크</span><span class="dv2"><div class="lnks">${h.maps?`<a href="${h.maps}" target="_blank" class="lnk lnk-map">📍 지도</a>`:''}${OFFICIAL[h.n]?`<a href="${OFFICIAL[h.n]}" target="_blank" class="lnk lnk-official">🌐 공식</a>`:''}${h.ref?`<a href="${h.ref}" target="_blank" class="lnk lnk-ref">🔗 견적·정보</a>`:''}</div></span></div>`:''}
         <div class="tags">${h.tags.map(t=>`<span class="tag ${tc(t)}">${t}</span>`).join('')}</div>
       </div>
     </div>`;
